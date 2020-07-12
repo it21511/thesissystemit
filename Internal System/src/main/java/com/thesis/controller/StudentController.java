@@ -73,21 +73,19 @@ public class StudentController {
 		final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		
 		String encodedPassword = passwordEncoder.encode(theStudent.getPassword());
-
-        // prepend the encoding algorithm id
-        theStudent.setPassword("{bcrypt}" + encodedPassword);
 		
-		studentService.saveStudent(theStudent);
-		
-
 		List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList("ROLE_STUDENT");
 
-        // create user object (from Spring Security framework)
+		 // create user object (from Spring Security framework)
         User tempUser = new User(theStudent.getUsername(), "{bcrypt}" + encodedPassword, true, true, true, true, authorities);
 
         // save user in the database
         userDetailsManager.createUser(tempUser);
-
+        
+        // prepend the encoding algorithm id
+        theStudent.setPassword("{bcrypt}" + encodedPassword);
+		
+		studentService.saveStudent(theStudent);
 		
 		return "redirect:/student/list";
 	}
